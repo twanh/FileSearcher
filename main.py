@@ -1,7 +1,7 @@
 import eel
 from typing import List, Tuple
 
-from searcher import Searcher
+from searcher import FileSearchEngine
 
 # Type defs
 StartSize = Tuple[int, int]
@@ -12,14 +12,17 @@ SearchFileRet = List[dict]
 # Structire
 # [{name: ..., path: ..., type: ...}]
 
-s = Searcher('D:\GDrive\School 19_20')
+s = FileSearchEngine('D:\GDrive\School 19_20')
 
 @eel.expose("search_file")
 def search_file(filename: str) -> str:
     print('Searching for files')
-    res = s.basic_search(filename)
+    res = s.simple_search(filename)
+    resDicts = []
+    for i in res:
+        resDicts.append(i.__dict__)
     print(res)
-    return res
+    return resDicts
     
 
 
