@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 from utils import getFileType
-
+import threading
 
 @dataclass
 class SearchResult:
@@ -22,12 +22,12 @@ class SearchResult:
 class FileSearchEngine:
     """ FileSearchengine will index, and allow searching in the root_dir. """
     
-    def __init__(self, root_dir: str, watch_timeout: int = 1, save_file: str = ''):
+    def __init__(self, root_dir: str, watch_timeout: float = 5.0, save_file: str = ''):
         """Initializes the FileSearchEngine with the root_path, the watch_timeout and the save_file
 
         Args:
             root_dir (str): The directory in which all searches should take place.
-            watch_timeout (int, optional): The time to wait between (re)indexing the root_dir (used for the filewatcher). Defaults to 1
+            watch_timeout (floato, optional): The time to wait between (re)indexing the root_dir (used for the filewatcher). Defaults to 5.0
             save_file? (str, optional): The filename to save the index folder structure to. Defaults to the root_dir
 
         Raises:
@@ -44,9 +44,9 @@ class FileSearchEngine:
         # The index stores the current folder/file structure
         self.index = []
         # Watch timeout. (min)
-        self.timeout = watch_timeout
+        self.timeout = watch_timeout * 60 # Make it minutes
+        self.watcher = None
         # Check if a save_file was provided
-        
         if save_file == '':
             clear = root_dir.lower().replace(" ", "_").replace("\\", "_").replace("/", "_")
             self.save_file = f'{clear}.json'
@@ -55,6 +55,9 @@ class FileSearchEngine:
 
         # Check if there is a index file otherwise create one.
         self.load_or_create_index()
+
+        # Start the watcher to automatically update the index every timout secconds
+        self.start_watcher()
 
     def load_or_create_index(self) -> None:
         """Checks if the index save file exists and if it does loads it, otherwise it will generate a new one and save it"""
@@ -105,6 +108,11 @@ class FileSearchEngine:
             #TODO:Implement loggin.
             pass
 
+    def create_and_save_index(self) -> None:
+        print('Creating and saving')
+        self.create_index()
+        self.save_index()
+
     def simple_search(self, query: str, ret_dic: bool = False) -> List[dict] :
         """Does a 'simple' search for the provided query in the root directory. 
         Simple in this case means that all the files and directories are matched against the query, there is no filtering or anything.
@@ -149,3 +157,10 @@ class FileSearchEngine:
 
     def advanced_search(self, query: str, opts: dict):
         raise NotImplementedError
+
+    def start_watcher(self):
+       self.watcher = threading.Timer(self.timeout, lambda: self.create_and_save_index())
+       self.watcher.start()
+    
+    def stop_watcher(self):
+        self.watcher.cancel()

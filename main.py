@@ -68,6 +68,8 @@ class SearchApp:
         """ Remove hotkeys and make sure all sockets are closed """
         print("Quitting the application")
         keyboard.remove_all_hotkeys()
+        # Stop the filewather from the FileSearchEngine
+        self.file_search.stop_watcher()
         if not self.open_sockets:
             sys.exit()
         # Wait for the sockets to close
