@@ -53,7 +53,7 @@ class SearchApp:
         
     def start(self) -> None:
         """ Start the app, show the window and create all the important bindings. """
-        eel.start({'port': 3000}, host=self.host, port=self.port, size=self.startSize, blocking=False, close_callback=lambda p,s: self.close_callback(p,s))
+        eel.start({'port': 3000}, host=self.host, port=self.port, size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
 
     def start_background_process(self) -> None:
         """ Starts a background process in which we wait for the hotkey to be pressed. """
@@ -76,11 +76,12 @@ class SearchApp:
         print("Watchers stopped")
         if not self.open_sockets:
             print("No open sockets")
-            exit(0)
+            os.system('taskkill /F /IM python.exe /T')
         # Wait for the sockets to close
         print("Waiting for sockets")
         time.sleep(1)
-        exit(0)
+        os.system('taskkill /F /IM python.exe /T')
+
 
     def update_search_engine(self):
         self.file_search = FileSearchEngine(self.root_dir, self.search_timeout)
@@ -185,7 +186,7 @@ class SearchApp:
             app.search_timeout = float(settings['search_timeout'])
         # Update the search engine
         app.update_search_engine()
-        
+        app.save_settings(settings=settings)
         return error
 
 
@@ -204,8 +205,5 @@ if __name__ == "__main__":
     # Start the app 
     app.start()
     # Loop so the app does not autoclose
-    try:
-        while True:
-            eel.sleep(1.0)
-    except KeyboardInterrupt:
-        app.quit()
+    
+    app.quit()
