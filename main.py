@@ -1,6 +1,7 @@
 import eel
 from typing import List, Tuple
 import subprocess, os, platform
+import sys
 
 import keyboard
 
@@ -98,5 +99,8 @@ if __name__ == "__main__":
     # Start the app 
     app.start()
     # Loop so the app does not autoclose
-    while True:
-        eel.sleep(1.0)
+    try:
+        while True:
+            eel.sleep(1.0)
+    except KeyboardInterrupt:
+        sys.exit()
