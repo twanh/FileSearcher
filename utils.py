@@ -2,10 +2,9 @@ import os
 
 # Keeps track of which type of extension should be classified as what
 fileTypes = {
-    'document_ext': ['docx', 'doc', 'odt', 'pdf', 'gdoc', 'xls', 'xlsx', 'ods', 'ppt', 'pptx', 'md', 'gslides', 'gsheets'],
+    'document_ext': ['.docx', '.doc', '.odt', '.pdf', '.gdoc', '.xls', '.xlsx', '.ods', '.ppt', '.pptx', '.md', '.gslides', '.gsheets'],
     # Image extensions
-    'image_ext': ['gif', 'png', 'jpg', 'jpeg', 'webp', 'tiff', 'psd', 'ai'],
-
+    'image_ext': ['.gif', '.png', '.jpg', '.jpeg', '.webp', '.tiff', '.psd', '.ai'],
 }
 
 # Stores the strings used to keep track of the file type.
