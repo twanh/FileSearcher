@@ -1,4 +1,6 @@
 import os
+from typing import List
+from operator import itemgetter
 
 # Keeps track of which type of extension should be classified as what
 fileTypes = {
@@ -25,3 +27,10 @@ def getFileType(path: str) -> str:
     if ext in fileTypes['image_ext']:
         return fileTypeNames['image']
     return fileTypeNames['other']
+
+def sortByFolder(results: List[object]):
+    # If the length of the results is less then or equal to 1 there is no need to sort it.
+    if len(results) <= 1:
+        return results
+    # Sort the files by folder
+    return sorted(results, key=itemgetter("file_type"))

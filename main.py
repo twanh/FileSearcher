@@ -3,6 +3,7 @@ from typing import List, Tuple
 import subprocess, os, platform
 
 from searcher import FileSearchEngine
+from utils import sortByFolder
 
 # Type defs
 StartSize = Tuple[int, int]
@@ -46,7 +47,7 @@ class SearchApp:
         # does not have access to the class
         # This is if the self.file_search changes for example when the root_dir is changed, we can 
         # still access the correct variable
-        return app.file_search.simple_search(search_query, ret_dic=True)
+        return sortByFolder(app.file_search.simple_search(search_query, ret_dic=True))
 
     @staticmethod
     @eel.expose("open_file")
