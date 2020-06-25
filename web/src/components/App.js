@@ -9,26 +9,56 @@ const FileIcon = () => <span className="icon  is-small"><i className='fas fa-fil
 const DocIcon = () => <span className="icon  is-small"><i className='fas fa-file-word' aria-hidden="true" /></span>
 const ImageIcon = () => <span className="icon  is-small"><i className='fas fa-file-image' aria-hidden="true" /></span>
 
+function FileItem({ file }) {
+  return (
+    <a
+      className="panel-block	"
+      href="#_"
+      css={css`cursor: pointer;`}
+      key={file.path}
+    >
+      <span className="panel-icon has-text-info">
+        {file.file_type === 'dir' && <FolderIcon />}
+        {file.file_type === 'img' && <ImageIcon />}
+        {file.file_type === 'doc' && <DocIcon />}
+        {file.file_type === 'any' && <FileIcon />}
+      </span>
+      {file.name} <span style={{ marginLeft: 5, color: "gray", fontSize: 10 }}>{`.../${file.path.split("\\").slice(-2).join('/')}`}</span>
+    </a>
+  )
+}
+
 function App() {
 
   // const [currentTab, setCurrentTab] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [files, setFiles] = useState([])
 
-  const handleSearchChange = async (e) => {
+  // Get the files and add them to the state
+  const getAndSetFiles = async () => {
+    const result = await searchFile(searchQuery)
+    setFiles(result)
+  }
+
+  // Handle the on change event on the main (search) input
+  const handleSearchChange = (e) => {
     e.preventDefault()
     setSearchQuery(e.target.value)
+    // We check if the query is larger then 4 because otherwise the result will be to 
+    // large and create a performance hit (see issue: #1)
     if (searchQuery.length >= 4) {
-      const result = await searchFile(searchQuery)
-      setFiles(result)
+      getAndSetFiles()
     }
   }
 
+  // Handle the enter press on the main input
+  // If enter is pressed we should search
   const handleEnter = async (e) => {
     if (e.keyCode === 13) {
-      const result = await searchFile(searchQuery)
-      setFiles(result)
+      getAndSetFiles()
     }
+
+
   }
 
 
@@ -47,23 +77,9 @@ function App() {
           <a className="is-active" href='#_'>All <FileIcon /></a>
           <a href="#_">Documents</a>
           <a href="#_">Images</a>
-
         </p>
         {files.length > 0 ? files.map(file => (
-          <a
-            className="panel-block	"
-            href="#_"
-            css={css`cursor: pointer;`}
-            key={file.path}
-          >
-            <span className="panel-icon has-text-info">
-              {file.file_type === 'dir' && <FolderIcon />}
-              {file.file_type === 'img' && <ImageIcon />}
-              {file.file_type === 'doc' && <DocIcon />}
-              {file.file_type === 'any' && <FileIcon />}
-            </span>
-            {file.name} <span style={{ marginLeft: 5, color: "gray", fontSize: 10 }}>{`.../${file.path.split("\\").slice(-2).join('/')}`}</span>
-          </a>
+          <FileItem file={file} />
         )) : (
             <p className="panel-block has-text-centered	 ">Start searching to find!</p>
           )}
