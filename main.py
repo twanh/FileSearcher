@@ -7,6 +7,7 @@ import keyboard
 
 from searcher import FileSearchEngine
 from utils import sortByFolder
+import time
 
 # Type defs
 StartSize = Tuple[int, int]
@@ -35,6 +36,9 @@ class SearchApp:
         self.hotkey = 'ctrl+shift+space'
         self.hotkey_callback = None
 
+        # Socket handling
+        self.open_sockets = None
+
         # Initialize the app
         eel.init('web\src', [".js", ".jsx", ".html"])
 
@@ -53,9 +57,24 @@ class SearchApp:
         """ Starts a background process in which we wait for the hotkey to be pressed. """
         self.hotkey_callback = keyboard.add_hotkey(self.hotkey, lambda: self.show(), suppress=True)
 
-    def close_callback(self, page, sockets):
+    def close_callback(self, _, sockets):
         """ Runs the background process when the main window is closed """
+        # Save the open sockets so we can correctly close them when needed
+        self.open_sockets = sockets 
+        # Start the background waiting process
         self.start_background_process()
+
+    def quit(self):
+        """ Remove hotkeys and make sure all sockets are closed """
+        print("Quitting the application")
+        keyboard.remove_all_hotkeys()
+        if not self.open_sockets:
+            sys.exit()
+        # Wait for the sockets to close
+        time.sleep(1)
+        self.quit()
+
+    ### !-- EEL EXPOSED METHODS --!
 
     @staticmethod
     @eel.expose("search_file")
@@ -103,4 +122,4 @@ if __name__ == "__main__":
         while True:
             eel.sleep(1.0)
     except KeyboardInterrupt:
-        sys.exit()
+        app.quit()
