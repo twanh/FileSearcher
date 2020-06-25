@@ -3,6 +3,7 @@ import "bulma/css/bulma.css"
 import { css } from '@emotion/core'
 
 import { searchFile, openFile } from '../eel'
+import SettingsModal from './SettingsModal';
 
 const FolderIcon = () => <span className="icon  is-small"><i className='fas fa-folder' aria-hidden="true" /></span>
 const FileIcon = () => <span className="icon  is-small"><i className='fas fa-file' aria-hidden="true" /></span>
@@ -75,11 +76,12 @@ function App() {
             </span>
           </p>
         </div>
-        <p className="panel-tabs">
+        <div className="panel-tabs">
           <a className="is-active" href='#_'>All <FileIcon /></a>
           <a href="#_">Documents</a>
           <a href="#_">Images</a>
-        </p>
+          <SettingsModal />
+        </div>
         {files.length > 0 ? files.map(file => (
           <FileItem file={file} handleClick={file_path => handleFileItemClick(file_path)} key={file.path} />
         )) : (
