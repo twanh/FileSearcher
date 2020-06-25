@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import "bulma/css/bulma.css"
+import { css } from '@emotion/core'
 
 import { searchFile } from '../eel'
 
@@ -10,7 +11,7 @@ const ImageIcon = () => <span className="icon  is-small"><i className='fas fa-fi
 
 function App() {
 
-  const [currentTab, setCurrentTab] = useState('all')
+  // const [currentTab, setCurrentTab] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [files, setFiles] = useState([])
 
@@ -43,21 +44,26 @@ function App() {
           </p>
         </div>
         <p className="panel-tabs">
-          <a className="is-active">All <FileIcon /></a>
-          <a>Documents</a>
-          <a>Images</a>
+          <a className="is-active" href='#_'>All <FileIcon /></a>
+          <a href="#_">Documents</a>
+          <a href="#_">Images</a>
 
         </p>
         {files.length > 0 ? files.map(file => (
-          <span className="panel-block" >
-            <span className="panel-icon">
+          <a
+            className="panel-block	"
+            href="#_"
+            css={css`cursor: pointer;`}
+            key={file.path}
+          >
+            <span className="panel-icon has-text-info">
               {file.file_type === 'dir' && <FolderIcon />}
               {file.file_type === 'img' && <ImageIcon />}
               {file.file_type === 'doc' && <DocIcon />}
               {file.file_type === 'any' && <FileIcon />}
             </span>
             {file.name} <span style={{ marginLeft: 5, color: "gray", fontSize: 10 }}>{`.../${file.path.split("\\").slice(-2).join('/')}`}</span>
-          </span>
+          </a>
         )) : (
             <p className="panel-block has-text-centered	 ">Start searching to find!</p>
           )}
