@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
 
+// Setup the EEL connection
+window.eel.set_host('ws://localhost:3020')
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
