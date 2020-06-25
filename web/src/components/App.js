@@ -46,7 +46,7 @@ function App() {
               {file.file_type === 'doc' && <DocIcon />}
               {file.file_type === 'any' && <FileIcon />}
             </span>
-            {file.name} <span style={{ color: "gray", fontSize: 10 }}>{file.path}</span>
+            {file.name} <span style={{ marginLeft: 5, color: "gray", fontSize: 10 }}>{`.../${file.path.split("\\").slice(-2).join('/')}`}</span>
           </span>
         )) : (
             <p className="panel-block has-text-centered	 ">Start searching to find!</p>

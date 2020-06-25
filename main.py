@@ -43,7 +43,7 @@ if __name__ == "__main__":
     # app.start()
     print('Setup')
     eel.init('web\src', [".js", ".jsx", ".html"])
-    eel.start({'port': 3000}, host='localhost', port="3020", size=(350, 700), block=False)
+    eel.start({'port': 3000}, host='localhost', port="3020", size=(1000, 700), block=False)
     print('Started...')
     eel.spawn(search_file, 'test')
     while True:
