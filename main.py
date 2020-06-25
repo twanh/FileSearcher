@@ -8,6 +8,7 @@ import keyboard
 from searcher import FileSearchEngine
 from utils import sortByFolder
 import time
+import json
 
 # Type defs
 StartSize = Tuple[int, int]
@@ -15,7 +16,7 @@ StartPos = Tuple[int, int]
 SearchFileRet = List[dict]
 
 class SearchApp:
-    def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str):
+    def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, search_timeout=5.0):
         """Initialize the search app
 
         Args:
@@ -30,7 +31,8 @@ class SearchApp:
         self.startSize = start_size
         self.startPosition = start_pos
         self.root_dir = root_dir
-        self.file_search = FileSearchEngine(root_dir)
+        self.search_timeout = search_timeout
+        self.file_search = FileSearchEngine(root_dir, search_timeout)
 
         # The hotkey to use when opening from the background
         self.hotkey = 'ctrl+shift+space'
@@ -68,13 +70,41 @@ class SearchApp:
         """ Remove hotkeys and make sure all sockets are closed """
         print("Quitting the application")
         keyboard.remove_all_hotkeys()
+        print("Hotkeys removed")
         # Stop the filewather from the FileSearchEngine
         self.file_search.stop_watcher()
+        print("Watchers stopped")
         if not self.open_sockets:
-            sys.exit()
+            print("No open sockets")
+            exit(0)
         # Wait for the sockets to close
+        print("Waiting for sockets")
         time.sleep(1)
-        self.quit()
+        exit(0)
+
+    def update_search_engine(self):
+        self.file_search = FileSearchEngine(self.root_dir, self.search_timeout)
+
+    def save_settings(self, file_name='settings.json', settings={}) -> None:
+        """Save the settings to a file
+
+        Args:
+            file_name (str, optional): The file to save the settings to. Defaults to 'settings.json'.
+            settings (dict, optional): The settings to save. Defaults to the result of get_settings().
+        """
+        if len(settings) < 1 :
+            settings = self.get_settings()
+        with open(file_name, 'w') as f:
+            json.dump(settings, f)
+
+    @staticmethod
+    def load_settings(file_name="settings.json") -> dict:
+        if os.path.isfile(file_name):
+            with open(file_name, 'r') as f:
+                settings = json.load(f)
+            return settings
+    
+        return {}
 
     ### !-- EEL EXPOSED METHODS --!
 
@@ -114,9 +144,63 @@ class SearchApp:
             # Use the linux equivalent of open command
             subprocess.call(('xdg-open', path))
 
+    @staticmethod
+    @eel.expose("get_settings")
+    def get_settings() -> object:
+        """get settings returns the settings of the current app
+
+        Returns:
+            Object: Containing the settings.
+        """
+        settings = {
+            "hotkey": app.hotkey,
+            "root_dir": app.root_dir,
+            "search_timeout": app.search_timeout
+        }
+        return settings
+
+    @staticmethod
+    @eel.expose("update_settings")
+    def update_settings(settings: dict) -> str:
+        """Save settings saves the settings and calls for a search engine update because it's values may have changed
+
+        Args:
+            settings (dict): The settings to update
+
+        Returns:
+            str: Error
+        """
+        error = ""
+        # Check if the newly given directory is actually an directory
+        if 'root_dir' in settings:
+            if os.path.isdir(settings['root_dir']):
+                app.root_dir = settings['root_dir']
+            else:
+                error = "The directory is not valid"
+        # Set the hotkey
+        if 'hotkey' in settings:
+            app.hotkey = settings['hotkey']
+        # Set the search timeout
+        if 'search_timeout' in settings:
+            app.search_timeout = float(settings['search_timeout'])
+        # Update the search engine
+        app.update_search_engine()
+        
+        return error
+
+
 if __name__ == "__main__":
     # Create the search app
-    app = SearchApp('localhost', "3020", (1000, 800), (0, 0), "D:\GDrive\School 19_20")
+    # Check if there are saved settings
+    settings = SearchApp.load_settings('settings.json')
+    if 'root_dir' in settings:
+        root_dir = settings['root_dir']
+    else:
+        root_dir = 'D:\GDrive\School 19_20'
+    app = SearchApp('localhost', "3020", (1000, 800), (0, 0), root_dir)
+    err = app.update_settings(settings)
+    if err != '' :
+        print("Error when updating settings:", err)
     # Start the app 
     app.start()
     # Loop so the app does not autoclose
