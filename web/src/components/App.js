@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import "bulma/css/bulma.css"
 import { css } from '@emotion/core'
 
-import { searchFile } from '../eel'
+import { searchFile, openFile } from '../eel'
 
 const FolderIcon = () => <span className="icon  is-small"><i className='fas fa-folder' aria-hidden="true" /></span>
 const FileIcon = () => <span className="icon  is-small"><i className='fas fa-file' aria-hidden="true" /></span>
 const DocIcon = () => <span className="icon  is-small"><i className='fas fa-file-word' aria-hidden="true" /></span>
 const ImageIcon = () => <span className="icon  is-small"><i className='fas fa-file-image' aria-hidden="true" /></span>
 
-function FileItem({ file }) {
+function FileItem({ file, handleClick }) {
   return (
     <a
       className="panel-block	"
       href="#_"
       css={css`cursor: pointer;`}
-      key={file.path}
+      onClick={_ => handleClick(file.path)}
     >
       <span className="panel-icon has-text-info">
         {file.file_type === 'dir' && <FolderIcon />}
@@ -57,8 +57,10 @@ function App() {
     if (e.keyCode === 13) {
       getAndSetFiles()
     }
+  }
 
-
+  const handleFileItemClick = (path) => {
+    openFile(path)
   }
 
 
@@ -79,7 +81,7 @@ function App() {
           <a href="#_">Images</a>
         </p>
         {files.length > 0 ? files.map(file => (
-          <FileItem file={file} />
+          <FileItem file={file} handleClick={file_path => handleFileItemClick(file_path)} key={file.path} />
         )) : (
             <p className="panel-block has-text-centered	 ">Start searching to find!</p>
           )}

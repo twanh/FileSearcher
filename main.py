@@ -1,5 +1,6 @@
 import eel
 from typing import List, Tuple
+import subprocess, os, platform
 
 from searcher import FileSearchEngine
 
@@ -8,9 +9,6 @@ StartSize = Tuple[int, int]
 StartPos = Tuple[int, int]
 
 SearchFileRet = List[dict]
-
-# Structire
-# [{name: ..., path: ..., type: ...}]
 
 s = FileSearchEngine('D:\GDrive\School 19_20')
 
@@ -23,8 +21,19 @@ def search_file(filename: str) -> str:
         resDicts.append(i.__dict__)
     print(res)
     return resDicts
-    
 
+@eel.expose("open_file")
+def open_file(path: str) -> None: 
+    # Check which operating system the user uses, because both methods do not work on the other os.
+    if platform.system() == 'Darwin':
+        # If on mac use the mac open terminal command
+        subprocess.call(('open', path))
+    elif platform.system() == 'Windows': 
+        # On windows we can use os.startfile
+        os.startfile(path)
+    else:
+        # Use the linux equivalent of open command
+        subprocess.call(('xdg-open', path))
 
 class SearchApp:
     def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos):
