@@ -50,7 +50,6 @@ class FileSearchEngine:
         if save_file == '':
             clear = root_dir.lower().replace(" ", "_").replace("\\", "_").replace("/", "_")
             self.save_file = f'{clear}.json'
-            print('new savefile ', self.save_file)
         else:
             self.save_file = save_file
 
@@ -106,18 +105,18 @@ class FileSearchEngine:
             #TODO:Implement loggin.
             pass
 
-    def simple_search(self, query: str) -> List[SearchResult]:
+    def simple_search(self, query: str, ret_dic: bool = False) -> List[dict] :
         """Does a 'simple' search for the provided query in the root directory. 
         Simple in this case means that all the files and directories are matched against the query, there is no filtering or anything.
 
         Args:
             query (str): The query to search for
+            ret_dic (bool, optional): Set to true if you want the return to be List[dict] instead of List[SearchResult]
 
         Returns:
             List[SearchResult]: The results of the search
         """
         results: List[SearchResult] = []
-        print(len(self.index))
 
         # Loop through everyitem in the index
         for item in self.index:
@@ -133,6 +132,8 @@ class FileSearchEngine:
                         file_type = getFileType(path)
                         # Create a searchresult and add it to the results list
                         res = SearchResult(name=name, path=path, file_type=file_type)
+                        if ret_dic:
+                            res = res.__dict__
                         results.append(res)
                 # Loop trough the directories and check if any of them match
                 for direc in dirs:
@@ -141,6 +142,8 @@ class FileSearchEngine:
                         path = os.path.join(path, direc)
                         file_type = getFileType(path)
                         res = SearchResult(name=name, path=path, file_type=file_type)
+                        if ret_dic:
+                            res = res.__dict__
                         results.append(res)
         return results
 
