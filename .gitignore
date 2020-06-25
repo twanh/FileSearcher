@@ -28,3 +28,6 @@ yarn-error.log*
 
 # Python
 __pycache__/
+
+# Index files
+_gdrive_school_19_20.json
