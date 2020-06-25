@@ -11,22 +11,32 @@ const ImageIcon = () => <span className="icon  is-small"><i className='fas fa-fi
 function App() {
 
   const [currentTab, setCurrentTab] = useState('all')
-  const [searchQuery, setSearchQuery] = useState('Search files or use /command')
+  const [searchQuery, setSearchQuery] = useState('')
   const [files, setFiles] = useState([])
 
   const handleSearchChange = async (e) => {
     e.preventDefault()
     setSearchQuery(e.target.value)
-    const result = await searchFile(searchQuery)
-    setFiles(result)
+    if (searchQuery.length >= 4) {
+      const result = await searchFile(searchQuery)
+      setFiles(result)
+    }
   }
+
+  const handleEnter = async (e) => {
+    if (e.keyCode === 13) {
+      const result = await searchFile(searchQuery)
+      setFiles(result)
+    }
+  }
+
 
   return (
     <div className="App">
       <nav className="panel">
         <div className="panel-block">
           <p className="control has-icons-left">
-            <input className="input" type="text" onChange={e => handleSearchChange(e)} value={searchQuery} placeholder="Search files or use /command" />
+            <input className="input" type="text" onChange={e => handleSearchChange(e)} onKeyDown={e => handleEnter(e)} value={searchQuery} placeholder="Search files or use /command" />
             <span className="icon is-left">
               <i className="fas fa-search" aria-hidden="true"></i>
             </span>
