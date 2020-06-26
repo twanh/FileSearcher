@@ -75,7 +75,7 @@ function App() {
       <nav className="panel">
         <div className="panel-block">
           <p className="control has-icons-left">
-            <input ref={input} className="input" type="text" onChange={e => handleSearchChange(e)} onKeyDown={e => handleEnter(e)} value={searchQuery} placeholder="Search files or use /command" />
+            <input ref={input} className="input" type="text" onChange={e => handleSearchChange(e)} onKeyDown={e => handleEnter(e)} value={searchQuery} placeholder="Search files" />
             <span className="icon is-left">
               <i className="fas fa-search" aria-hidden="true"></i>
             </span>
@@ -83,8 +83,8 @@ function App() {
         </div>
         <div className="panel-tabs">
           <a className="is-active" href='#_'>All <FileIcon /></a>
-          <a href="#_">Documents</a>
-          <a href="#_">Images</a>
+          {/* <a href="#_">Documents</a> */}
+          {/* <a href="#_">Images</a> */}
           <SettingsModal />
         </div>
         {files.length > 0 ? files.map(file => (
