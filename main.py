@@ -93,23 +93,40 @@ class SearchApp:
     def quit(self):
         """ Remove hotkeys and make sure all sockets are closed """
         print("Quitting the application")
+        # Wrap it in an extra try except because some libaries suppress 
+        # some errors and try to keep their loop alive
         try:
-            keyboard.remove_all_hotkeys()
-        except AttributeError:
-            pass
-        print("Hotkeys removed")
-        # Stop the filewather from the FileSearchEngine
-        self.file_search.stop_watcher()
-        print("Watchers stopped")
-        self.icon.stop()
-        print("Removed the icon")
-        if not self.open_sockets:
-            print("No open sockets")
-            os.system('taskkill /F /IM python.exe /T')
-        # Wait for the sockets to close
-        print("Waiting for sockets")
-        time.sleep(1)
-        os.system('taskkill /F /IM python.exe /T')
+            try:
+                keyboard.remove_all_hotkeys()
+            except AttributeError:
+                pass
+            print("Hotkeys removed")
+            # Stop the filewather from the FileSearchEngine
+            self.file_search.stop_watcher()
+            print("Watchers stopped")
+            self.icon.stop()
+            print("Removed the icon")
+            if not self.open_sockets:
+                print("No open sockets")
+                self.kill_program()
+            # Wait for the sockets to close
+            print("Waiting for sockets")
+            time.sleep(1)
+            self.kill_program()
+        except:
+            self.kill_program()
+
+    def kill_program(self):
+        """ Stops (kills) this program """
+        pid = os.getpid()
+        if platform.system() == 'Darwin':
+            kill_cmd = f"kill -9 {pid}"
+        elif platform.system() == "Windows":
+            kill_cmd = f"taskkill /F /PID {pid} /T"
+        else:
+            kill_cmd = f"kill -9 {pid}"
+        os.system(kill_cmd)
+
 
     def create_tray_icon(self) -> None:
         """ Creates the tray icon and starts the background processes as soon as the icon is created. """
