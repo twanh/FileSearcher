@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import "bulma/css/bulma.css"
 import { css } from '@emotion/core'
 
@@ -34,6 +34,7 @@ function App() {
   // const [currentTab, setCurrentTab] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [files, setFiles] = useState([])
+  const input = useRef(null)
 
   // Get the files and add them to the state
   const getAndSetFiles = async () => {
@@ -64,13 +65,17 @@ function App() {
     openFile(path)
   }
 
+  useEffect(() => {
+    input.current.focus()
+  }, [])
+
 
   return (
     <div className="App">
       <nav className="panel">
         <div className="panel-block">
           <p className="control has-icons-left">
-            <input className="input" type="text" onChange={e => handleSearchChange(e)} onKeyDown={e => handleEnter(e)} value={searchQuery} placeholder="Search files or use /command" />
+            <input ref={input} className="input" type="text" onChange={e => handleSearchChange(e)} onKeyDown={e => handleEnter(e)} value={searchQuery} placeholder="Search files or use /command" />
             <span className="icon is-left">
               <i className="fas fa-search" aria-hidden="true"></i>
             </span>
