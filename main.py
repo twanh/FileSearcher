@@ -5,6 +5,8 @@ import sys
 
 import keyboard
 import pyautogui
+import pystray
+from PIL import Image
 
 
 from searcher import FileSearchEngine
@@ -40,15 +42,26 @@ class SearchApp:
         self.hotkey = 'ctrl+shift+space'
         self.hotkey_callback = None
 
+        # Tray icon
+        self.icon_name = "FileSearcher"
+        self.icon = None
+        # NOTE: Check if path stays the same in prod
+        self.icon_image_path = "web\public\icon.png"
+        self.icon_image = None
+
         # Socket handling
         self.open_sockets = None
 
         # Initialize the app
         eel.init('web\src', [".js", ".jsx", ".html"])
 
+    # !-- LIFECYCLE METHODS --!
+
     def show(self):
         """ Show is triggered when the hotkey is pressed so it unbinds the hotkey and shows"""
         # Unbind the hotkey to avoid conflicts
+        if self.icon != None:
+            self.icon.stop()
         keyboard.remove_hotkey(self.hotkey_callback)
         # Show the app
         eel.show({'port': 3000})
@@ -57,25 +70,36 @@ class SearchApp:
         """ Start the app, show the window and create all the important bindings. """
         eel.start({'port': 3000}, host=self.host, port=self.port, size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
 
-    def start_background_process(self) -> None:
-        """ Starts a background process in which we wait for the hotkey to be pressed. """
+
+    def start_background_process(self, _) -> None:
+        """Starts a background process in which we wait for the hotkey to be pressed.
+
+        Args:
+            _ (None): Is required to be passed as in the callback for the icon but is not used
+        """
+        self.icon.visible = True
         self.hotkey_callback = keyboard.add_hotkey(self.hotkey, lambda: self.show(), suppress=True)
 
     def close_callback(self, _, sockets):
         """ Runs the background process when the main window is closed """
         # Save the open sockets so we can correctly close them when needed
         self.open_sockets = sockets 
-        # Start the background waiting process
-        self.start_background_process()
+        # Start the tray icon which then start the background process
+        self.create_tray_icon()
 
     def quit(self):
         """ Remove hotkeys and make sure all sockets are closed """
         print("Quitting the application")
-        keyboard.remove_all_hotkeys()
+        try:
+            keyboard.remove_all_hotkeys()
+        except AttributeError:
+            pass
         print("Hotkeys removed")
         # Stop the filewather from the FileSearchEngine
         self.file_search.stop_watcher()
         print("Watchers stopped")
+        self.icon.stop()
+        print("Removed the icon")
         if not self.open_sockets:
             print("No open sockets")
             os.system('taskkill /F /IM python.exe /T')
@@ -84,6 +108,26 @@ class SearchApp:
         time.sleep(1)
         os.system('taskkill /F /IM python.exe /T')
 
+    def create_tray_icon(self):
+        print('Creating tray icon') #TODO: Remove
+        self.icon = pystray.Icon(self.icon_name, self.load_icon_img(), title=self.icon_name, menu=pystray.Menu(
+            pystray.MenuItem(
+                "Open FileSearcher",
+                lambda: self.show(),
+                default=True
+            ),
+            pystray.MenuItem(
+                "Quit",
+                lambda: self.quit()
+            )
+        ))
+        self.icon.run(self.start_background_process)
+        
+
+
+
+
+    # !-- SETTINGS --! 
 
     def update_search_engine(self):
         self.file_search = FileSearchEngine(self.root_dir, self.search_timeout)
@@ -109,7 +153,17 @@ class SearchApp:
     
         return {}
 
-    ### !-- EEL EXPOSED METHODS --!
+    # !-- HELPER METHODS --!
+
+    def load_icon_img(self) -> Image:
+        """ Load image loads the icon image into self.icon_image """
+        # Check if the given path is actually a file and then load the image
+        if os.path.isfile(self.icon_image_path):
+            self.icon_image = Image.open(self.icon_image_path)
+        return self.icon_image    
+     
+
+    # !-- EEL EXPOSED METHODS --!
 
     @staticmethod
     @eel.expose("search_file")
