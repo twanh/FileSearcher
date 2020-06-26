@@ -59,9 +59,10 @@ class SearchApp:
 
     def show(self):
         """ Show is triggered when the hotkey is pressed so it unbinds the hotkey and shows"""
-        # Unbind the hotkey to avoid conflicts
+        # Removes the tray icon 
         if self.icon != None:
             self.icon.stop()
+        # Unbind the hotkey to avoid conflicts
         keyboard.remove_hotkey(self.hotkey_callback)
         # Show the app
         eel.show({'port': 3000})
@@ -73,11 +74,13 @@ class SearchApp:
 
     def start_background_process(self, _) -> None:
         """Starts a background process in which we wait for the hotkey to be pressed.
-
+        Note: This method should only be called from self.create_tray_icon()
         Args:
             _ (None): Is required to be passed as in the callback for the icon but is not used
         """
+        # Makes the icon visible
         self.icon.visible = True
+        # Creates the hotkey and binds self.show() to the trigger
         self.hotkey_callback = keyboard.add_hotkey(self.hotkey, lambda: self.show(), suppress=True)
 
     def close_callback(self, _, sockets):
@@ -108,28 +111,30 @@ class SearchApp:
         time.sleep(1)
         os.system('taskkill /F /IM python.exe /T')
 
-    def create_tray_icon(self):
-        print('Creating tray icon') #TODO: Remove
+    def create_tray_icon(self) -> None:
+        """ Creates the tray icon and starts the background processes as soon as the icon is created. """
+        # Setup the icon
         self.icon = pystray.Icon(self.icon_name, self.load_icon_img(), title=self.icon_name, menu=pystray.Menu(
             pystray.MenuItem(
                 "Open FileSearcher",
-                lambda: self.show(),
-                default=True
+                lambda: self.show(), # Shows the application on click
+                default=True # Default action, so this also gets triggered when clicking on the icon itself
             ),
             pystray.MenuItem(
                 "Quit",
-                lambda: self.quit()
+                lambda: self.quit() # Quits the application on click
             )
         ))
+        # Run the icon and start the background process
         self.icon.run(self.start_background_process)
         
-
-
-
 
     # !-- SETTINGS --! 
 
     def update_search_engine(self):
+        """ Updates the search engine settings
+            Note: it creates a new search engine
+        """
         self.file_search = FileSearchEngine(self.root_dir, self.search_timeout)
 
     def save_settings(self, file_name='settings.json', settings={}) -> None:
@@ -146,6 +151,14 @@ class SearchApp:
 
     @staticmethod
     def load_settings(file_name="settings.json") -> dict:
+        """Loads the settings from file_name
+
+        Args:
+            file_name (str, optional): The filename pointing to the settings file. Defaults to "settings.json".
+
+        Returns:
+            dict: The settings is a dictionary
+        """
         if os.path.isfile(file_name):
             with open(file_name, 'r') as f:
                 settings = json.load(f)
