@@ -4,6 +4,8 @@ import subprocess, os, platform
 import sys
 
 import keyboard
+import pyautogui
+
 
 from searcher import FileSearchEngine
 from utils import sortByFolder
@@ -198,12 +200,18 @@ if __name__ == "__main__":
         root_dir = settings['root_dir']
     else:
         root_dir = 'D:\GDrive\School 19_20'
-    app = SearchApp('localhost', "3020", (1000, 800), (0, 0), root_dir)
+    # Get the screen resolution
+    s_w, s_h = pyautogui.size()
+    # Define the default width and height of the application
+    w, h = 1000, 800
+    # Calculate the position where the window should be shown
+    pos_w, pos_h = ((s_w/2)-(w/2)), ((s_h/2)+(h/2))
+    # Create the app
+    app = SearchApp('localhost', "3020", (w, h), (pos_w, pos_h), root_dir)
+    # Automatically update the settings.
     err = app.update_settings(settings)
     if err != '' :
         print("Error when updating settings:", err)
     # Start the app 
-    app.start()
-    # Loop so the app does not autoclose
-    
-    app.quit()
+    app.start() # Blocking
+    app.quit() # Always make sure that the app closes correctly
