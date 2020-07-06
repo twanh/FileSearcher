@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.1.0-beta (2020-07-06)
+## v1.0.0-beta (2020-07-06)
 
 #### New Features
 
@@ -26,3 +26,6 @@
 * update requirements.txt, update eel
 * Remove all unused interface links - closes: [#13](https://github.com/twanh/FileSearcher/issues/13)
 * Add docstrings and minor improvements'
+#### Others
+
+* Version 1.0.0-beta
