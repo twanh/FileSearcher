@@ -20,7 +20,7 @@ StartPos = Tuple[int, int]
 SearchFileRet = List[dict]
 
 class SearchApp:
-    def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, search_timeout=5.0):
+    def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, prod: bool=True, search_timeout=5.0):
         """Initialize the search app
 
         Args:
@@ -41,7 +41,8 @@ class SearchApp:
         # The hotkey to use when opening from the background
         self.hotkey = 'ctrl+shift+space'
         self.hotkey_callback = None
-
+        # Set environment (prod/dev)
+        self.prod = prod
         # Tray icon
         self.icon_name = "FileSearcher"
         self.icon = None
@@ -53,7 +54,10 @@ class SearchApp:
         self.open_sockets = None
 
         # Initialize the app
-        eel.init('web\src', [".js", ".jsx", ".html"])
+        if self.prod:
+            eel.init('web\\build', [".js", ".jsx", ".html"])
+        else:
+            eel.init('web\\src', [".js", ".jsx", ".html"])
 
     # !-- LIFECYCLE METHODS --!
 
@@ -65,11 +69,20 @@ class SearchApp:
         # Unbind the hotkey to avoid conflicts
         keyboard.remove_hotkey(self.hotkey_callback)
         # Show the app
-        eel.show({'port': 3000})
+        if self.prod: 
+            # In production we show the build page
+            eel.show('index.html')
+        else:
+            # In dev we show the dev server
+            eel.show({'port': 3000})
         
     def start(self) -> None:
         """ Start the app, show the window and create all the important bindings. """
-        eel.start({'port': 3000}, host=self.host, port=self.port, size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
+        if not self.prod:
+            eel.start({'port': 3000}, host=self.host, port=int(self.port), size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
+        else:
+            #eel.start({"file": 'index.html', 'port': 3000}, host=self.host, port=self.port, size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
+            eel.start('index.html', host=self.host, port=int(self.port), size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
 
 
     def start_background_process(self, _) -> None:
@@ -290,8 +303,10 @@ if __name__ == "__main__":
     w, h = 1000, 800
     # Calculate the position where the window should be shown
     pos_w, pos_h = ((s_w/2)-(w/2)), ((s_h/2)+(h/2))
+    # Check cmd args to see if we are in dev or prod
+    prod = not len(sys.argv) == 2 # True if there is an extra arg specified but gets inverted, so extra arg = dev 
     # Create the app
-    app = SearchApp('localhost', "3020", (w, h), (pos_w, pos_h), root_dir)
+    app = SearchApp('localhost', "3020", (w, h), (pos_w, pos_h), root_dir, prod=prod)
     # Automatically update the settings.
     err = app.update_settings(settings)
     if err != '' :
