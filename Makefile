@@ -1,15 +1,20 @@
 install-interface:
-	cd web/ && npm install
-
+	@echo "Installing interface dependencies"
+	cd web/ ;	npm install
+	
 install-backend:
+	@echo "Installing backend dependencies"
 	pip3 install -r requirements.txt  
 	
 install: install-backend install-interface
 
-run-interface: 
-	cd web/ && npm start
+build-interface:
+	@echo "Building the interface"
+	cd web/ ; npm run build
 
-run-backend:
-	python3 main.py
-
-run: run-interface run-backend
+build-backend: build-interface
+	@echo "Building the application"
+	python -m eel main.py web/build --onefile --noconsole --hidden-import pkg_resources.py2_warn
+	
+build: install build-interface build-backend
+	@echo "Build complete!"
