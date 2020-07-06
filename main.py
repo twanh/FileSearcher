@@ -46,8 +46,14 @@ class SearchApp:
         # Tray icon
         self.icon_name = "FileSearcher"
         self.icon = None
-        # NOTE: Check if path stays the same in prod
-        self.icon_image_path = "web\public\icon.png"
+        if self.prod:
+            if getattr(sys, 'frozen', False):
+                self.icon_image_path = os.path.join(sys._MEIPASS, "web\\build\\icon.png")
+            else:
+                self.icon_image_path = "web\\build\\icon.png"
+            print(self.icon_image_path)
+        else:
+            self.icon_image_path = "web\\public\\icon.png"
         self.icon_image = None
 
         # Socket handling
