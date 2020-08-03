@@ -17,7 +17,7 @@ window.eel.set_host('ws://localhost:3020');
 
 // Setup Beufy
 Vue.use(Buefy, {
-  defaultIconPack: 'fas'
+  defaultIconPack: 'mdi'
 });
 
 new Vue({
