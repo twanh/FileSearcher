@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    Connecting to eel.
+    Connecting to EEK
   </div>
 </template>
 

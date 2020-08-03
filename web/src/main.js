@@ -1,4 +1,8 @@
 import Vue from 'vue';
+
+import Buefy from 'buefy';
+import 'buefy/dist/buefy.css';
+
 import App from './App.vue';
 
 Vue.config.productionTip = false;
@@ -10,6 +14,11 @@ if (!window.eel) {
   );
 }
 window.eel.set_host('ws://localhost:3020');
+
+// Setup Beufy
+Vue.use(Buefy, {
+  defaultIconPack: 'fas'
+});
 
 new Vue({
   render: h => h(App)
