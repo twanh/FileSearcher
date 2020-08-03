@@ -16,7 +16,7 @@
   - [x] Search bar
   - [x] Tab bar
   - [x] Results section
-  - [ ] Settings popup
+  - [x] Settings popup
 - [ ] Have the layout interact with the backend (make it functional 😀)
   - [ ] Searching
     - Auto start searching when 4 character are typed
