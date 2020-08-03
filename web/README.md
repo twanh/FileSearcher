@@ -1,6 +1,7 @@
 # FileSearcher
 
 ## Migrate to Vue:
+- [ ] Cleanup the vue install 
 - [ ] Setup the connection between backend and frontend
   - [ ] Connect the websocket
   - [ ] Port over the connected functions
