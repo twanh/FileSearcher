@@ -13,8 +13,8 @@
 - [ ] Create Layout
   - [x] Install buefy (bulma 4 vue component wrapper)
     - Setup buefy
-  - [ ] Search bar
-  - [ ] Tab bar
+  - [x] Search bar
+  - [x] Tab bar
   - [ ] Results section
   - [ ] Settings popup
 - [ ] Have the layout interact with the backend (make it functional 😀)

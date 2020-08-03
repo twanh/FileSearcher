@@ -1,6 +1,16 @@
 <template>
   <div id="app">
-    Connecting to EEK
+    <div class="panel">
+      <div class="panel-block">
+        <b-input placeholder="Search..." type="text" icon="magnify"></b-input>
+      </div>
+      <div class>
+        <b-tabs v-model="activeTab" position="is-centered">
+          <b-tab-item label="All" icon="file-search-outline">fff</b-tab-item>
+          <b-tab-item label="Settings" icon="cog-outline">ff</b-tab-item>
+        </b-tabs>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -9,14 +19,3 @@ export default {
   name: 'App'
 };
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
