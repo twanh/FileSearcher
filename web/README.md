@@ -1,26 +1,26 @@
 # FileSearcher
 
 ## Migrate to Vue:
-- [ ]: Setup the connection between backend and frontend
-  - [ ]: Connect the websocket
-  - [ ]: Port over the connected functions
+- [ ] Setup the connection between backend and frontend
+  - [ ] Connect the websocket
+  - [ ] Port over the connected functions
     - searchFile
     - openFile
     - getSettings
     - saveSettings
-- [ ]: Create Layout
-  - [ ]: Install buetify (bulma 4 vue component wrapper) 
+- [ ] Create Layout
+  - [ ] Install buetify (bulma 4 vue component wrapper) 
     - Setup beutify 
-  - [ ]: Search bar
-  - [ ]: Tab bar
-  - [ ]: Results section
-  - [ ]: Settings popup
-- [ ]: Have the layout interact with the backend (make it functional 😀)
-  - [ ]: Searching
+  - [ ] Search bar
+  - [ ] Tab bar
+  - [ ] Results section
+  - [ ] Settings popup
+- [ ] Have the layout interact with the backend (make it functional 😀)
+  - [ ] Searching
     - Auto start searching when 4 character are typed
     - Search on `enter` press (`submit` event). 
-  - [ ]: Opening files
-  - [ ]: settings
+  - [ ] Opening files
+  - [ ] settings
     - Open settings modal
     - Change and save settings
 
