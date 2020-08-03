@@ -3,9 +3,9 @@
 ## Migrate to Vue:
 
 - [x] Cleanup the vue install
-- [ ] Setup the connection between backend and frontend
-  - [ ] Connect the websocket
-  - [ ] Port over the connected functions
+- [x] Setup the connection between backend and frontend
+  - [x] Connect the websocket
+  - [x] Port over the connected functions
     - searchFile
     - openFile
     - getSettings

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    Hoi
+    Connecting to eel.
   </div>
 </template>
 
