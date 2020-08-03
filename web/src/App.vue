@@ -14,7 +14,9 @@
               @click.native="handleOpen(file)"
             ></file-item>
           </b-tab-item>
-          <b-tab-item label="Settings" icon="cog-outline">ff</b-tab-item>
+          <b-tab-item label="Settings" icon="cog-outline">
+            <settings></settings>
+          </b-tab-item>
         </b-tabs>
       </div>
     </div>
@@ -26,10 +28,12 @@
  * The main App component
  */
 import FileItem from '@/components/FileItem.vue';
+import Settings from '@/components/Settings.vue';
 export default {
   name: 'App',
   components: {
-    'file-item': FileItem
+    'file-item': FileItem,
+    settings: Settings
   },
   data() {
     return {
