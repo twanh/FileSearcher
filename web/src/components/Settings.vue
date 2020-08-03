@@ -19,6 +19,11 @@
       >
         <b-numberinput v-model="fetchTiemout">5</b-numberinput>
       </b-field>
+      <br />
+      <div class="buttons">
+        <b-button type="is-success">Save!</b-button>
+        <b-button type="is-danger" outlined>Cancel</b-button>
+      </div>
     </form>
   </section>
 </template>
