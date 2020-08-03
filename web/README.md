@@ -15,7 +15,7 @@
     - Setup buefy
   - [x] Search bar
   - [x] Tab bar
-  - [ ] Results section
+  - [x] Results section
   - [ ] Settings popup
 - [ ] Have the layout interact with the backend (make it functional 😀)
   - [ ] Searching
