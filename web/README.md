@@ -11,8 +11,8 @@
     - getSettings
     - saveSettings
 - [ ] Create Layout
-  - [ ] Install buetify (bulma 4 vue component wrapper)
-    - Setup beutify
+  - [ ] Install buefy (bulma 4 vue component wrapper)
+    - Setup buefy
   - [ ] Search bar
   - [ ] Tab bar
   - [ ] Results section
