@@ -20,17 +20,19 @@ StartPos = Tuple[int, int]
 SearchFileRet = List[dict]
 
 class SearchApp:
-    def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, prod: bool=True, search_timeout=5.0):
+    def __init__(self, host: str, dev_port: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, prod: bool=True, search_timeout=5.0):
         """Initialize the search app
 
         Args:
             host (str): The ipadress to host the app
-            port (str): The port to expose
+            dev_port: The port the webapp is hosted on (in dev mode)
+            port (str): The port to expose (for the websocket)
             start_size (StartSize): The size of the main window when starting up
             start_pos (StartPos): The position on the screen when starting the application
             root_dir (str): The root directory where all searches take place
         """
         self.host = host
+        self.dev_port = dev_port
         self.port = port
         self.startSize = start_size
         self.startPosition = start_pos
@@ -80,12 +82,12 @@ class SearchApp:
             eel.show('index.html')
         else:
             # In dev we show the dev server
-            eel.show({'port': 3000})
+            eel.show({'port': self.dev_port})
         
     def start(self) -> None:
         """ Start the app, show the window and create all the important bindings. """
         if not self.prod:
-            eel.start({'port': 3000}, host=self.host, port=int(self.port), size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
+            eel.start({'port': self.dev_port}, host=self.host, port=int(self.port), size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
         else:
             #eel.start({"file": 'index.html', 'port': 3000}, host=self.host, port=self.port, size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
             eel.start('index.html', host=self.host, port=int(self.port), size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
@@ -312,7 +314,7 @@ if __name__ == "__main__":
     # Check cmd args to see if we are in dev or prod
     prod = not len(sys.argv) == 2 # True if there is an extra arg specified but gets inverted, so extra arg = dev 
     # Create the app
-    app = SearchApp('localhost', "3020", (w, h), (pos_w, pos_h), root_dir, prod=prod)
+    app = SearchApp('localhost',8080, "3020", (w, h), (pos_w, pos_h), root_dir, prod=prod)
     # Automatically update the settings.
     err = app.update_settings(settings)
     if err != '' :
