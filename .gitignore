@@ -31,7 +31,10 @@ yarn-error.log*
 __pycache__/
 
 # Index files
+_gdrive_school_20_21.json
 _gdrive_school_19_20.json
+
+
 
 # Setting files
 settings.json
