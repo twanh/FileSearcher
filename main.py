@@ -1,6 +1,8 @@
 import eel
 from typing import List, Tuple
-import subprocess, os, platform
+import subprocess
+import os
+import platform
 import sys
 
 import keyboard
@@ -19,8 +21,9 @@ StartSize = Tuple[int, int]
 StartPos = Tuple[int, int]
 SearchFileRet = List[dict]
 
+
 class SearchApp:
-    def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, prod: bool=True, search_timeout=5.0):
+    def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, prod: bool = True, search_timeout=5.0):
         """Initialize the search app
 
         Args:
@@ -48,7 +51,8 @@ class SearchApp:
         self.icon = None
         if self.prod:
             if getattr(sys, 'frozen', False):
-                self.icon_image_path = os.path.join(sys._MEIPASS, "web\\build\\icon.png")
+                self.icon_image_path = os.path.join(
+                    sys._MEIPASS, "web\\build\\icon.png")
             else:
                 self.icon_image_path = "web\\build\\icon.png"
             print(self.icon_image_path)
@@ -69,27 +73,28 @@ class SearchApp:
 
     def show(self):
         """ Show is triggered when the hotkey is pressed so it unbinds the hotkey and shows"""
-        # Removes the tray icon 
+        # Removes the tray icon
         if self.icon != None:
             self.icon.stop()
         # Unbind the hotkey to avoid conflicts
         keyboard.remove_hotkey(self.hotkey_callback)
         # Show the app
-        if self.prod: 
+        if self.prod:
             # In production we show the build page
             eel.show('index.html')
         else:
             # In dev we show the dev server
             eel.show({'port': 3000})
-        
+
     def start(self) -> None:
         """ Start the app, show the window and create all the important bindings. """
         if not self.prod:
-            eel.start({'port': 3000}, host=self.host, port=int(self.port), size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
+            eel.start({'port': 3000}, host=self.host, port=int(self.port), size=self.startSize,
+                      blocking=True, close_callback=lambda p, s: self.close_callback(p, s))
         else:
             #eel.start({"file": 'index.html', 'port': 3000}, host=self.host, port=self.port, size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
-            eel.start('index.html', host=self.host, port=int(self.port), size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
-
+            eel.start('index.html', host=self.host, port=int(self.port), size=self.startSize,
+                      blocking=True, close_callback=lambda p, s: self.close_callback(p, s))
 
     def start_background_process(self, _) -> None:
         """Starts a background process in which we wait for the hotkey to be pressed.
@@ -100,19 +105,20 @@ class SearchApp:
         # Makes the icon visible
         self.icon.visible = True
         # Creates the hotkey and binds self.show() to the trigger
-        self.hotkey_callback = keyboard.add_hotkey(self.hotkey, lambda: self.show(), suppress=True)
+        self.hotkey_callback = keyboard.add_hotkey(
+            self.hotkey, lambda: self.show(), suppress=True)
 
     def close_callback(self, _, sockets):
         """ Runs the background process when the main window is closed """
         # Save the open sockets so we can correctly close them when needed
-        self.open_sockets = sockets 
+        self.open_sockets = sockets
         # Start the tray icon which then start the background process
         self.create_tray_icon()
 
     def quit(self):
         """ Remove hotkeys and make sure all sockets are closed """
         print("Quitting the application")
-        # Wrap it in an extra try except because some libaries suppress 
+        # Wrap it in an extra try except because some libaries suppress
         # some errors and try to keep their loop alive
         try:
             try:
@@ -146,26 +152,24 @@ class SearchApp:
             kill_cmd = f"kill -9 {pid}"
         os.system(kill_cmd)
 
-
     def create_tray_icon(self) -> None:
         """ Creates the tray icon and starts the background processes as soon as the icon is created. """
         # Setup the icon
         self.icon = pystray.Icon(self.icon_name, self.load_icon_img(), title=self.icon_name, menu=pystray.Menu(
             pystray.MenuItem(
                 "Open FileSearcher",
-                lambda: self.show(), # Shows the application on click
-                default=True # Default action, so this also gets triggered when clicking on the icon itself
+                lambda: self.show(),  # Shows the application on click
+                default=True  # Default action, so this also gets triggered when clicking on the icon itself
             ),
             pystray.MenuItem(
                 "Quit",
-                lambda: self.quit() # Quits the application on click
+                lambda: self.quit()  # Quits the application on click
             )
         ))
         # Run the icon and start the background process
         self.icon.run(self.start_background_process)
-        
 
-    # !-- SETTINGS --! 
+    # !-- SETTINGS --!
 
     def update_search_engine(self):
         """ Updates the search engine settings
@@ -180,7 +184,7 @@ class SearchApp:
             file_name (str, optional): The file to save the settings to. Defaults to 'settings.json'.
             settings (dict, optional): The settings to save. Defaults to the result of get_settings().
         """
-        if len(settings) < 1 :
+        if len(settings) < 1:
             settings = self.get_settings()
         with open(file_name, 'w') as f:
             json.dump(settings, f)
@@ -199,7 +203,7 @@ class SearchApp:
             with open(file_name, 'r') as f:
                 settings = json.load(f)
             return settings
-    
+
         return {}
 
     # !-- HELPER METHODS --!
@@ -209,8 +213,7 @@ class SearchApp:
         # Check if the given path is actually a file and then load the image
         if os.path.isfile(self.icon_image_path):
             self.icon_image = Image.open(self.icon_image_path)
-        return self.icon_image    
-     
+        return self.icon_image
 
     # !-- EEL EXPOSED METHODS --!
 
@@ -218,7 +221,7 @@ class SearchApp:
     @eel.expose("search_file")
     def search_file(search_query: str) -> List[dict]:
         """Search file is exposed to the interface and uses FileSearchEngine to search for the given query
- 
+
         Args:
             search_query (str): The query to search for
         Returns:
@@ -227,13 +230,13 @@ class SearchApp:
 
         # This is a bit hacky, but the method has to be a static method because the javascript
         # does not have access to the class
-        # This is if the self.file_search changes for example when the root_dir is changed, we can 
+        # This is if the self.file_search changes for example when the root_dir is changed, we can
         # still access the correct variable
         return sortByFolder(app.file_search.simple_search(search_query, ret_dic=True))
 
     @staticmethod
     @eel.expose("open_file")
-    def open_file(path: str) -> None: 
+    def open_file(path: str) -> None:
         """open_file is exposed to the interface and opens the file or folder specified in the path argument in the associated application
 
         Args:
@@ -243,7 +246,7 @@ class SearchApp:
         if platform.system() == 'Darwin':
             # If on mac use the mac open terminal command
             subprocess.call(('open', path))
-        elif platform.system() == 'Windows': 
+        elif platform.system() == 'Windows':
             # On windows we can use os.startfile
             os.startfile(path)
         else:
@@ -302,7 +305,10 @@ if __name__ == "__main__":
     if 'root_dir' in settings:
         root_dir = settings['root_dir']
     else:
-        root_dir = 'D:\GDrive\School 19_20'
+        # If the root_dir is not specified in the settings
+        # we default to the root path of the os. (/ for linux & c:/ or d:/ etc for windows)
+        root_dir = os.path.abspath(os.sep)
+
     # Get the screen resolution
     s_w, s_h = pyautogui.size()
     # Define the default width and height of the application
@@ -310,13 +316,22 @@ if __name__ == "__main__":
     # Calculate the position where the window should be shown
     pos_w, pos_h = ((s_w/2)-(w/2)), ((s_h/2)+(h/2))
     # Check cmd args to see if we are in dev or prod
-    prod = not len(sys.argv) == 2 # True if there is an extra arg specified but gets inverted, so extra arg = dev 
+    # True if there is an extra arg specified but gets inverted, so extra arg = dev
+    prod = not len(sys.argv) == 2
     # Create the app
-    app = SearchApp('localhost', "3020", (w, h), (pos_w, pos_h), root_dir, prod=prod)
+    try:
+        app = SearchApp('localhost', 8080, "3020", (w, h),
+                        (pos_w, pos_h), root_dir, prod=prod)
+    except FileNotFoundError:
+        new_dir = os.path.abspath(os.sep)
+        print(
+            f'Error: The given root directory could not be found, using {new_dir} instead!')
+        app = SearchApp('localhost', 8080, "3020", (w, h),
+                        (pos_w, pos_h), new_dir, prod=prod)
     # Automatically update the settings.
     err = app.update_settings(settings)
-    if err != '' :
+    if err != '':
         print("Error when updating settings:", err)
-    # Start the app 
-    app.start() # Blocking
-    app.quit() # Always make sure that the app closes correctly
+    # Start the app
+    app.start()  # Blocking
+    app.quit()  # Always make sure that the app closes correctly
