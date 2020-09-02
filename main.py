@@ -23,11 +23,7 @@ SearchFileRet = List[dict]
 
 
 class SearchApp:
-<<<<<<< HEAD
-    def __init__(self, host: str, dev_port: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, prod: bool=True, search_timeout=5.0):
-=======
     def __init__(self, host: str, port: str, start_size: StartSize, start_pos: StartPos, root_dir: str, prod: bool = True, search_timeout=5.0):
->>>>>>> d6a1ae3d2815e34d5bceeb4c651342f342e04bf9
         """Initialize the search app
 
         Args:
@@ -90,14 +86,6 @@ class SearchApp:
             eel.show('index.html')
         else:
             # In dev we show the dev server
-<<<<<<< HEAD
-            eel.show({'port': self.dev_port})
-        
-    def start(self) -> None:
-        """ Start the app, show the window and create all the important bindings. """
-        if not self.prod:
-            eel.start({'port': self.dev_port}, host=self.host, port=int(self.port), size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
-=======
             eel.show({'port': 3000})
 
     def start(self) -> None:
@@ -105,7 +93,6 @@ class SearchApp:
         if not self.prod:
             eel.start({'port': 3000}, host=self.host, port=int(self.port), size=self.startSize,
                       blocking=True, close_callback=lambda p, s: self.close_callback(p, s))
->>>>>>> d6a1ae3d2815e34d5bceeb4c651342f342e04bf9
         else:
             #eel.start({"file": 'index.html', 'port': 3000}, host=self.host, port=self.port, size=self.startSize, blocking=True, close_callback=lambda p,s: self.close_callback(p,s))
             eel.start('index.html', host=self.host, port=int(self.port), size=self.startSize,
@@ -334,9 +321,6 @@ if __name__ == "__main__":
     # True if there is an extra arg specified but gets inverted, so extra arg = dev
     prod = not len(sys.argv) == 2
     # Create the app
-<<<<<<< HEAD
-    app = SearchApp('localhost',8080, "3020", (w, h), (pos_w, pos_h), root_dir, prod=prod)
-=======
     try:
         app = SearchApp('localhost', 8080, "3020", (w, h),
                         (pos_w, pos_h), root_dir, prod=prod)
@@ -346,7 +330,6 @@ if __name__ == "__main__":
             f'Error: The given root directory could not be found, using {new_dir} instead!')
         app = SearchApp('localhost', 8080, "3020", (w, h),
                         (pos_w, pos_h), new_dir, prod=prod)
->>>>>>> d6a1ae3d2815e34d5bceeb4c651342f342e04bf9
     # Automatically update the settings.
     err = app.update_settings(settings)
     if err != '':
