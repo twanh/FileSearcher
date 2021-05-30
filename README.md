@@ -1,8 +1,6 @@
 # FileSearcher
 FileSearcher takes away the struggle of having to open a new explorer window and navigate slowly to a file or directory!
 
-![](example.gif)
-
 ### Motivation for building File Searcher
 When working on school projects I frequently have to open summaries, research, notes, etc... But searching for these files in windows explorer takes ages because it searches the whole file system and it usually does not even find the correct file or folder. File Searcher has one root folder it will search, so for my purpose I set it to the folder I store all my school files in.
 
